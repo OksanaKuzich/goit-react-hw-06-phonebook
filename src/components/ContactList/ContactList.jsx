@@ -1,11 +1,14 @@
 import PropTypes from 'prop-types';
 import { ContactListItem } from './ContactListItem';
 import { ListContacts } from './ContactList.styled';
+import { useSelector } from 'react-redux';
 
 export const ContactList = ({ visible, onDeleteContact }) => {
+const visibleContacts = useSelector(state => state.contacts)
+
   return (
     <ListContacts>
-      {visible.map(({ id, name, number }) => {
+      {visibleContacts.map(({ id, name, number }) => {
         return (
           <ContactListItem
             onDeleteContact={onDeleteContact}
