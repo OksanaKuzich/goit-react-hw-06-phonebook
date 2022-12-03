@@ -1,24 +1,22 @@
-import PropTypes from 'prop-types';
-import { useState } from 'react';
 import {
   FormStyles,
   LabelStyles,
   InputStyles,
   ButtonAdd,
 } from './ContactForm.styled';
-import { useDispatch } from 'react-redux';
+import { getContactsArray } from 'redux/selectors';
+import { useDispatch, useSelector } from 'react-redux';
 import { addContact } from 'redux/contactsSlice';
 
 export function ContactForm() {
-  const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
-
+  const array = useSelector(getContactsArray);
+  
   const handleInputName = e => {
-    setName(e.currentTarget.value);
+    return e.currentTarget.value;
   };
 
   const handleInputNumber = e => {
-    setNumber(e.currentTarget.value);
+    return e.currentTarget.value;
   };
 
   const dispatch = useDispatch();
@@ -27,11 +25,18 @@ export function ContactForm() {
     e.preventDefault();
     const name = e.target.elements.name.value;
     const number = e.target.elements.number.value;
-    console.log(name, number);
     const item = { name, number };
-    dispatch(addContact(item));
     e.target.reset();
-  };
+
+    
+  const isDublicate = array.some(
+    contact => contact.name.toLowerCase() === name.toLowerCase()
+  );
+
+    isDublicate
+      ? alert(`${name} is already in contacts`)
+      : dispatch(addContact(item));
+  }
 
   return (
     <FormStyles onSubmit={addContactsItem}>
@@ -44,7 +49,6 @@ export function ContactForm() {
           title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
           required
           placeholder="Ivan"
-          value={name}
           onChange={handleInputName}
         />
       </LabelStyles>
@@ -57,7 +61,6 @@ export function ContactForm() {
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
           required
           placeholder="111-11-11"
-          value={number}
           onChange={handleInputNumber}
         />
       </LabelStyles>
@@ -65,7 +68,3 @@ export function ContactForm() {
     </FormStyles>
   );
 }
-
-ContactForm.propTypes = {
-  addContacts: PropTypes.func.isRequired,
-};
